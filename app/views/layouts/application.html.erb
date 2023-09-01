@@ -1,72 +1,69 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    # アプリのタイトル 
-    <title>SNS App</title>
-    # ウェブページがモバイルデバイスやレスポンシブデザインをサポートするブラウザ上でどのように表示されるべきかを制御
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-    # Style 
-    <link rel="stylesheet" href="<%= mix('/css/app.css') %>">
-    # Javascript追加 
-    <script src="<%= mix('/js/bootstrap.js') %>"></script>
-    # turbo.jsを追加
-    <script src="<%= mix('/js/turbo.js') %>"></script>
-  </head>
+<head>
+  # title 
+  <title>SNS App</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  # Style 
+  <link rel="stylesheet" href="<%= mix('/css/app.css') %>">
+  # Javascript 
+  <script src="<%= mix('/js/bootstrap.js') %>"></script>
+  # turbo.jsを追加
+  <script src="<%= mix('/js/turbo.js') %>"></script>
+</head>
 
-  <body>
-    #コンテンツの挿入
-    <div class="main-container">
-      #  ナビゲーションバーの追加 
-      <nav class="custom-navbar">
-        <div id="menuToggle">
-          <input type="checkbox" />
-          <span></span>
-          <span></span>
-          <span></span>
-          <ul id="menu">
-            # 2-8.追加
-            <% if user_signed_in? %>
-              <li>
-                <%= link_to "ログアウト", destroy_user_session_path, method: :delete, class: "nav-link" %>
-              </li>
-              <li>
-                <%= link_to "投稿一覧", "/", class: "nav-link" %>
-              </li>
-              <li>
-                <%= link_to "新規投稿", new_post_path, class: "nav-link" %>
-              </li>
-            <% else %>
-              <li>
-                <%= link_to "新規登録", new_user_registration_path, class: "nav-link" %>
-              </li>
-              <li>
-                <%= link_to "ログイン", new_user_session_path, class: "nav-link" %>
-              </li>
-            <% end %> 
-          </ul>
-        </div>
-      </nav>
-
-      # アラートメッセージの追加 
-      <% if notice %>
-        <div class="alert alert-success" role="alert">
-          <%= notice %>
-        </div>
-      <% end %>
-      <% if alert %>
-        <div class="alert alert-danger" role="alert">
-          <%= alert %>
-        </div>
-      <% end %>
-
-      <div class="bg-white text-dark">
-        <%= yield %>
+<body>
+  <div class="main-container">
+    #  ナビゲーションバー 
+    <nav class="custom-navbar">
+      <div id="menuToggle">
+        <input type="checkbox" />
+        <span></span>
+        <span></span>
+        <span></span>
+        <ul id="menu">
+          # ここから追加
+          <% if user_signed_in? %>
+            <li>
+              <%= link_to "ログアウト", destroy_user_session_path, method: :delete, class: "nav-link" %>
+            </li>
+            <li>
+              <%= link_to "投稿一覧", "/", class: "nav-link" %>
+            </li>
+            <li>
+              <%= link_to "新規投稿", new_post_path, class: "nav-link" %>
+            </li>
+          <% else %>
+            <li>
+              <%= link_to "新規登録", new_user_registration_path, class: "nav-link" %>
+            </li>
+            <li>
+              <%= link_to "ログイン", new_user_session_path, class: "nav-link" %>
+            </li>
+          <% end %>
+        </ul>
       </div>
-    </div>
+    </nav>
 
-    # Javascript追加 
-    <script src="<%= mix('/js/app.js') %>"></script>
-  </body>
+    # アラートメッセージ 
+    <% if notice %>
+      <div class="alert alert-success" role="alert">
+        <%= notice %>
+      </div>
+    <% end %>
+    <% if alert %>
+      <div class="alert alert-danger" role="alert">
+        <%= alert %>
+      </div>
+    <% end %>
+
+    <div class="bg-white text-dark">
+      <%= yield %>
+    </div>
+  </div>
+  # Javascript
+  <script src="<%= mix('/js/app.js') %>"></script>
+</body>
 </html>

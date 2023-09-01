@@ -11,7 +11,7 @@ module Src
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.0
 
-    # ここから追加
+    # 追加
     config.i18n.default_locale = :ja
     config.time_zone = "Tokyo"
     # ここまで

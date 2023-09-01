@@ -12,7 +12,6 @@ const mix = require('laravel-mix');
  */
 
 mix.setPublicPath('public')
-    // ここでapp/assets/stylesheets/sass/app.scssをコンパイルしてpublic/css/app.cssとして生成している
     .sass('app/assets/stylesheets/sass/app.scss', 'public/css/app.css')
     .js('app/javascript/app.js', 'public/js/app.js')
     .js('app/javascript/bootstrap.js', 'public/js/bootstrap.js')
