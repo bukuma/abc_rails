@@ -1,3 +1,23 @@
-<div>
-  <h1>投稿一覧</h1>
+<div class="search-container">
+  <%= form_with url: index_post_path, class: "form", method: :get, local: true do |form| %>
+    <input class="input" type="text" name="title" placeholder="タイトルで検索" value="<%= params[:title] %>">
+    <%= form.submit "検索", class: "button" %>
+  <% end %>
+</div>
+
+<div class="post-list">
+  <% @posts.each do |post| %>
+    <a class="post" href="<%= new_comment_path(post) %>">
+      <div class="header">
+        <h2 class="title"><%= post.title %></h2>
+        <p class="timestamp"><%= post.created_at.strftime("%B %d, %Y") %></p>
+      </div>
+      <div class="body">
+        <p class="content"><%= post.body %></p>
+      </div>
+      <div class="image">
+        <%= image_tag(post.image) if post.image.attached? %>
+      </div>
+    </a>
+  <% end %>
 </div>

@@ -1,0 +1,23 @@
+<div class="search-container">
+  <%= form_with url: index_topic_path, class: "form", method: :get, local: true do |form| %>
+    <input class="input" type="text" name="title" placeholder="タイトルで検索" value="<%= params[:title] %>">
+    <%= form.submit "検索", class: "button" %>
+  <% end %>
+</div>
+
+<div class="topic-list">
+  <% @topics.each do |topic| %>
+    <a class="topic" href="<%= edit_topic_path(topic) %>">
+      <div class="header">
+        <h2 class="title"><%= topic.title %></h2>
+        <p class="timestamp"><%= topic.created_at.strftime("%B %d, %Y") %></p>
+      </div>
+      <div class="body">
+        <p class="content"><%= topic.body %></p>
+      </div>
+      <div class="image">
+        <%= image_tag(topic.image) if topic.image.attached? %>
+      </div>
+    </a>
+  <% end %>
+</div>

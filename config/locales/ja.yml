@@ -2,11 +2,26 @@ ja:
   activerecord:
     models:
       user: 'ユーザー'
+      # 2-10 postを追加
+      post: '投稿'
+      topic: 'トピックス'
+      # 2-13 追加
+      comment: 'コメント'
     attributes:
       user:
         email: 'メールアドレス'
         password: 'パスワード'
         password_confirmation: 'パスワード確認用'
+      # 2-10 postを追加
+      post:
+        title: 'タイトル'
+        content: '内容'
+        image: '画像'
+      topic:
+        title: 'タイトル'
+      # 2-13 コメントブロックを追加
+      comment:
+        content: 'コメント'
 
   date:
     abbr_day_names:

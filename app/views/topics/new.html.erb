@@ -1,3 +1,24 @@
-<div>
-  <h1>スレッド新規登録</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-md-8 mx-auto topic-form-container">
+      <h2 class="h2">スレッドの新規作成</h2>
+      <%= form_with(url: create_topic_path, model: @topic, local: true, method: :topic, html: { class: 'topic-form' }) do |f| %>
+        <% if @topic.errors.any? %>
+          <ul>
+            <% @topic.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %> </ul>
+        <% end %>  
+
+        <div class="form-group">
+          <%= f.label "スレッド名", class: 'form-label' %>
+          <%= f.text_field :title, class: 'form-control' %>
+        </div>
+
+        <div class="button-group">
+          <%= f.submit '投稿する', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
