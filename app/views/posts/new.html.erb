@@ -1,39 +1,57 @@
-<div class="container">
-  <div class="row">
-    <div class="col-md-8 mx-auto post-form-container">
-      <h2 class="h2">新規投稿</h2>
-      # 2－10　追加
-      # model: @post を追加
-      <%= form_with(url: create_post_path, model: @post, local: true, method: :post, html: { class: 'post-form' }) do |f| %>
-        <% if @post.errors.any? %>
-          <ul>
-            <% @post.errors.full_messages.each do |message| %>
-              <li><%= message %></li>
-            <% end %> </ul>
-        <% end %>
-        <div class="form-group">
-          <%= f.label "タイトル", class: 'form-label' %>
-          <%= f.text_field :title, class: 'form-control' %>
-        </div>
+<script type="text/javascript">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      // cdn読み込み 
+      <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/draw2d@1.0.38/dist/draw2d.js"></script>
+      <script type="text/javascript">
+          let canvas = null;
+          document.addEventListener("turbo:load", function () {
+              canvas = new draw2d.Canvas("canvas_id");
 
-        <div class="form-group">
-          <%= f.label "本文", class: 'form-label' %>
-          <%= f.text_area :body, class: 'form-control' %>
-        </div>
+              //ドラッグ&ドロップで connectionを作成できるようにする
+              canvas.installEditPolicy(new draw2d.policy.connection.DragConnectionCreatePolicy({
+                  createConnection: function () {
+                      return new draw2d.Connection({
+                          //connectionの形状の設定
+                          router: new draw2d.layout.connection.InteractiveManhattanConnectionRouter()
+                      })
+                  }
+              }));
+          });
+          function canvas_redo() {
+              redo.replace
+              canvas.getCommandStack().redo();
+          }
+          function canvas_undo() {
+              canvas.getCommandStack().undo();
+          }
+          function figure_delete() {
+              canvas.getCommandStack().execute(
+                  new draw2d.command.CommandDelete(canvas.getPrimarySelection()));
+          }
+          function label_add() {
+              let label = new draw2d.shape.basic.Label({ text: "テキスト" });
+              label.createPort("input");
+              label.createPort("output");
+              canvas.getCommandStack().execute(new draw2d.command.CommandAdd(canvas, label, 10, 10));
+          }
+      </script>
+  </head>
 
-        <div class="form-group image-upload">
-          <%= f.label "画像", class: 'form-label' %>
-          <div class="image-preview" id="imagePreview">
-            <img src="" alt="Image Preview" class="image-preview__image">
-            <span class="image-preview__default-text">Image will be displayed here</span>
-          </div>
-          <%= f.file_field :image, class: 'form-control-file', id: 'imageUpload' %>
-        </div>
+  <body id="container">
+      <div style="margin: 5px;">
+          <input type="button" value="undo" onclick="canvas_undo()">
+          <input type="button" value="redo" onclick="canvas_redo()">
+          <input type="button" value="delete" onclick="figure_delete()">
+          <input type="button" value="label_add" onclick="label_add()">
+      </div>
+      <div id="canvas_id" style="width:3000px; height:3000px;background-color: rgb(220, 220, 220);"></div>
+  </body>
 
-        <div class="button-group">
-          <%= f.submit '投稿', class: 'btn btn-primary' %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-</div>
+  </html>
+
+
+  console.log('test')
+</script>
