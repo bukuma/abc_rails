@@ -1,46 +1,315 @@
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/draw2d@1.0.38/dist/draw2d.js"></script>
+
+<style>
+    .draw2d_InputPort{
+    fill: #3ee9e9;
+    stroke: #3ee9e9;
+    }
+    .draw2d_OutputPort{
+    fill: #3ee9e9;
+    stroke: #3ee9e9;
+    }
+</style>
+
+
 <script type="text/javascript">
-    let canvas = null;
+
+    let canvas = null;   
+
     document.addEventListener("DOMContentLoaded", function () {
-        console.log("test")
+
         canvas = new draw2d.Canvas("canvas_id");
         
         canvas.installEditPolicy(new draw2d.policy.connection.DragConnectionCreatePolicy({
+            
             createConnection: function () {
-                return new draw2d.Connection({
-                    
+
+                let connection = new draw2d.Connection({
                     router: new draw2d.layout.connection.InteractiveManhattanConnectionRouter()
-                })
+                });
+
+                connection.setColor("#7FFFD4");
+               
+                return connection;
             }
         }));
     });
-    function canvas_redo() {
-        redo.replace
+
+
+    function canvas_redo() {       
         canvas.getCommandStack().redo();
     }
-    function canvas_undo() {
+
+    function canvas_undo() {      
         canvas.getCommandStack().undo();
     }
-    function figure_delete() {
-        canvas.getCommandStack().execute(
+
+    function figure_delete() {       
+        canvas.getCommandStack().execute(         
             new draw2d.command.CommandDelete(canvas.getPrimarySelection()));
     }
+
+    let MyInputPortLocator = draw2d.layout.locator.PortLocator.extend({        
+        init:function( ){
+        this._super();
+        },
+        relocate:function(index, figure){
+            
+            this.applyConsiderRotation(figure, figure.getParent().getWidth()/2, 0);
+        }
+    });
+
+    let MyOutputPortLocator = draw2d.layout.locator.PortLocator.extend({
+        init:function( ){
+        this._super();
+        },
+        relocate:function(index, figure){
+            var p = figure.getParent();
+
+            this.applyConsiderRotation(figure, p.getWidth()/2, p.getHeight());
+        }
+    });
+
+    let topPort;
+    let borromPort;
+    let leftPort;
+    let rightPort;
+
+
     function label_add() {
-        console.log("test");
-        let label = new draw2d.shape.basic.Label({ text: "テキスト" });
-        label.createPort("input");
-        label.createPort("output");
-        canvas.getCommandStack().execute(new draw2d.command.CommandAdd(canvas, label, 10, 10));
+    let LabelDiamond = draw2d.shape.basic.Diamond.extend({
+        init: function (attr) {
+            this._super(attr);
+
+            this.label = new draw2d.shape.basic.Label({
+                text: "選択肢",
+                color: "transparent",
+                fontColor: "#0d0d0d",
+            });
+
+            this.add(this.label, new draw2d.layout.locator.CenterLocator(this));
+
+            this.label.installEditor(new draw2d.ui.LabelInplaceEditor());
+
+            topPort = this.createPort("output", new draw2d.layout.locator.TopLocator(this));
+
+            bottomPort = this.createPort("output", new draw2d.layout.locator.BottomLocator(this));
+
+            leftPort = this.createPort("output", new draw2d.layout.locator.LeftLocator(this));
+
+            rightPort = this.createPort("output", new draw2d.layout.locator.RightLocator(this));
+
+        }
+    });
+
+    let labelDiamond = new LabelDiamond({
+        width: 60, 
+        height: 40, 
+    });
+
+    labelDiamond.setBackgroundColor("#DDFFFF"); 
+    labelDiamond.setColor("#d7d7d7");
+
+    canvas.getCommandStack().execute(new draw2d.command.CommandAdd(canvas, labelDiamond, 100, 100));
+
     }
+
+  
+    function addComment() {
+        
+        let commentText = prompt("コメントを入力:");
+        
+        if (commentText !== null) {
+            
+            let comment = new draw2d.shape.basic.Label({ text: commentText });
+            
+            comment.createPort("input");
+            comment.createPort("output");
+            comment.setColor("#d7d7d7"); 
+            comment.setBackgroundColor("#DDFFFF");
+            canvas.getCommandStack().execute(new draw2d.command.CommandAdd(canvas, comment, 200, 200));
+            
+        }
+    }
+
+    TableShape = draw2d.shape.layout.VerticalLayout.extend({
+
+        NAME: "TableShape",
+
+        init : function(attr)
+        {
+            this._super($.extend({bgColor:"#dbddde", color:"#d7d7d7", stroke:1, radius:3},attr));
+
+            this.classLabel = new draw2d.shape.basic.Label({
+                text:"ClassName", 
+                stroke:1,
+                color:"#d7d7d7", 
+                fontColor:"#009999",  
+                bgColor:"#f7f7f7", 
+                radius: this.getRadius(), 
+                padding:10,
+                resizeable:true, 
+                editor:new draw2d.ui.LabelInplaceEditor()
+            });
+
+            this.add(this.classLabel);
+        },
+
+
+        addEntity: function(txt, optionalIndex)
+        {
+            let label =new draw2d.shape.basic.Label({
+                text:txt,
+                stroke:0,
+                radius:0,
+                bgColor:"#DDFFFF",
+                padding:{left:10, top:3, right:10, bottom:5},
+                fontColor:"#4a4a4a",
+                resizeable:true,
+                editor:new draw2d.ui.LabelEditor()
+            });
+
+
+        let input = label.createPort("input");
+        let output= label.createPort("output");
+
+        input.setName("input_"+label.id);
+        output.setName("output_"+label.id);
+
+        let _table=this;
+        label.on("contextmenu", function(emitter, event){
+
+            $.contextMenu({
+                selector: 'body', 
+                events:
+                {  
+                    hide:function(){ $.contextMenu( 'destroy' ); } // メニューを破棄
+                },
+                callback: $.proxy(function(key, options) 
+                {
+                    switch(key){
+                    case "rename":
+                        setTimeout(function(){
+                            emitter.onDoubleClick();
+                        },10);
+                        break;
+                    case "new":
+                        setTimeout(function(){
+                            _table.addEntity("_new_").onDoubleClick();
+                        },10);
+                        break;                
+                    case "delete":
+                        var cmd = new draw2d.command.CommandDelete(emitter);
+                        emitter.getCanvas().getCommandStack().execute(cmd);
+                    default:
+                        break;
+                    }
+
+                },this),
+                x:event.x, 
+                y:event.y, 
+                items: 
+                {
+                    "rename": {name: "Rename"},
+                    "new":    {name: "New Entity"},
+                    "sep1":   "---------",
+                    "delete": {name: "Delete"}
+                }
+            });
+        });
+
+        if($.isNumeric(optionalIndex)){
+            this.add(label, null, optionalIndex+1);
+        }
+        else{
+            this.add(label);
+        }
+
+        return label; 
+    },
+
+    removeEntity: function(index)
+    {
+        this.remove(this.children.get(index+1).figure);
+    },
+
+    getEntity: function(index)
+    {
+        return this.children.get(index+1).figure;
+    },
+
+    setName: function(name)
+    {
+        this.classLabel.setText(name);
+        return this;
+    },
+
+
+    getPersistentAttributes : function()
+    {
+        let memento= this._super();
+
+        memento.name = this.classLabel.getText();
+
+        memento.entities   = [];
+
+        this.children.each(function(i,e){
+
+            if(i>0){  // ヘッダー部分をスキップ
+                memento.entities.push({
+                    text:e.figure.getText(), 
+                    id: e.figure.id // エンティティのID
+                });
+            }
+        });
+
+        return memento;
+    },
+
+    setPersistentAttributes : function(memento)
+    {
+        this._super(memento);
+
+        this.setName(memento.name);
+
+        if(typeof memento.entities !== "undefined"){
+
+            $.each(memento.entities, $.proxy(function(i,e){  
+                let entity =this.addEntity(e.text);
+                entity.id = e.id;
+
+                entity.getInputPort(0).setName("input_"+e.id);
+                entity.getOutputPort(0).setName("output_"+e.id);
+            },this));
+        }
+        return this;
+    }  
+    });
+
+    function addTable() {
+
+        let table = new TableShape({ x: 300, y: 300, width: 200, height: 150 });
+        canvas.add(table);
+
+        table.addEntity("イベント");
+        table.addEntity("イベント2");
+
+        table.setName("番号");
+    }
+
 </script>
 
+<body id="container">
+<div style="margin: 10px;">
+    <input type="button" value="undo" onclick="canvas_undo()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    <input type="button" value="redo" onclick="canvas_redo()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    <input type="button" value="delete" onclick="figure_delete()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    <input type="button" value="Item" onclick="label_add()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    <input type="button" value="Comment" onclick="addComment()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    <input type="button" value="Table" onclick="addTable()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
 
-<div style="margin: 5px;">
-    <input type="button" value="undo" onclick="canvas_undo()">
-    <input type="button" value="redo" onclick="canvas_redo()">
-    <input type="button" value="delete" onclick="figure_delete()">
-    <input type="button" value="label_add" onclick="label_add()">
 </div>
-<div id="canvas_id" style="width:3000px; height:3000px;background-color: rgb(220, 220, 220);"></div>
+
+<div id="canvas_id" style="width:3000px; height:3000px; background-color: rgb(250, 250, 250);"></div>
