@@ -1,6 +1,8 @@
-<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/draw2d@1.0.38/dist/draw2d.js"></script>
+
 
 <style>
     .draw2d_InputPort{
@@ -299,7 +301,35 @@
         table.setName("番号");
     }
 
+        let canvasScale = 1.0;
+        let canvasMinScale = 0.2;
+        let canvasMaxScale = 3.0;
+        let canvasScaleStep = 0.1;
+
+        let originalCanvasScale = canvasScale;
+
+        function zoomIn() {
+            if (canvasScale + canvasScaleStep <= canvasMaxScale) {
+                canvas.setZoom(canvasScale + canvasScaleStep);
+                canvasScale += canvasScaleStep;
+            }
+        }
+
+        function zoomOut() {
+            if (canvasScale - canvasScaleStep >= canvasMinScale) {
+                canvas.setZoom(canvasScale - canvasScaleStep);
+                canvasScale -= canvasScaleStep;
+            }
+        }
+
+        function resetZoom() {
+            canvas.setZoom(1.0); 
+            canvasScale = 1.0; 
+        }
+
+
 </script>
+
 
 <body id="container">
 <div style="margin: 10px;">
@@ -309,7 +339,56 @@
     <input type="button" value="Item" onclick="label_add()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
     <input type="button" value="Comment" onclick="addComment()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
     <input type="button" value="Table" onclick="addTable()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input type="button" value="Zoom In" onclick="zoomIn()" style="background-color: #e0c0ea; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    <input type="button" value="１：１" onclick="resetZoom()" style="background-color: #e0c0ea; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">    
+    <input type="button" value="Zoom Out" onclick="zoomOut()" style="background-color: #e0c0ea; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    </div>
 
-</div>
 
-<div id="canvas_id" style="width:3000px; height:3000px; background-color: rgb(250, 250, 250);"></div>
+    <div id="canvas_id" style="width:3000px; height:3000px; background-color: rgb(250, 250, 250);"></div>
+
+
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8 mx-auto post-form-container">
+        <h2 class="h2">新規投稿</h2>
+        <!-- ここから入れ替えて追加します-->
+        <!-- model: @post を追加しています -->
+        <%= form_with(url: create_post_path, model: @post, local: true, method: :post, html: { class: 'post-form' } ) do |f| %>
+          <!-- バリデーションエラーメッセージ表示を追加しています -->
+          <% if @post.errors.any? %>
+            <ul>
+              <% @post.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %> </ul>
+          <% end %>
+        <!-- ここまで -->
+          <div class="form-group">
+            <%= f.label "タイトル", class: 'form-label' %>
+            <%= f.text_field :title, class: 'form-control' %>
+          </div>
+
+          <div class="form-group">
+            <%= f.label "本文", class: 'form-label' %>
+            <%= f.text_area :body, class: 'form-control' %>
+          </div>
+
+          <div class="form-group image-upload">
+            <%= f.label "画像", class: 'form-label' %>
+            <div class="image-preview" id="imagePreview">
+              <img src="" alt="Image Preview" class="image-preview__image">
+              <span class="image-preview__default-text">Image will be displayed here</span>
+            </div>
+            <%= f.file_field :image, class: 'form-control-file', id: 'imageUpload' %>
+          </div>
+
+          <div class="button-group">
+            <%= f.submit '投稿', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</footer>
