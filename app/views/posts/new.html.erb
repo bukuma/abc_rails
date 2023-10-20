@@ -326,12 +326,11 @@
             canvas.setZoom(1.0); 
             canvasScale = 1.0; 
         }
-
-        function canvas_initialize() {
-        canvas.clear();
+    
+        function reloadPage() {
+        location.reload(); 
         }
-
-
+        
 </script>
 
 
@@ -340,6 +339,7 @@
     <input type="button" value="undo" onclick="canvas_undo()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
     <input type="button" value="redo" onclick="canvas_redo()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
     <input type="button" value="delete" onclick="figure_delete()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <input type="button" value="Item" onclick="label_add()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
     <input type="button" value="Comment" onclick="addComment()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
     <input type="button" value="Table" onclick="addTable()" style="background-color: #70e5e7; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
@@ -348,11 +348,11 @@
     <input type="button" value="１：１" onclick="resetZoom()" style="background-color: #e0c0ea; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">    
     <input type="button" value="Zoom Out" onclick="zoomOut()" style="background-color: #e0c0ea; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <input type="button" value="Reset" onclick="canvas_initialize()" style="background-color: #f1f1c6; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
+    <input type="button" value="Reload" onclick="reloadPage()" style="background-color: #a3f2c9; color: #fff; border-radius: 10px; width: 100px; height: 50px; font-size: 18px; border:none">
     </div>
 
 
-    <div id="canvas_id" style="width:3000px; height:3000px; background-color: rgb(250, 250, 250);"></div>
+    <div id="canvas_id" style="width:1550px; height:700px; background-color: rgb(244, 244, 235);"></div>
 
 
 <footer>
